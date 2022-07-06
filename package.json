@@ -1,0 +1,21 @@
+{
+  "name": "msal-node-console",
+  "version": "1.0.0",
+  "description": "Command line app showing how to use client credential grant to acquire tokens from Azure AD",
+  "main": "bin/index.js",
+  "bin": {
+    "msal-node-cli": "bin/index.js"
+  },
+  "scripts": {},
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/msal-node": "^1.9.1",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "node-fetch": "^3.2.6",
+    "nodemon": "^2.0.18",
+    "prompt": "^1.3.0",
+    "yargs": "^17.5.1"
+  }
+}
