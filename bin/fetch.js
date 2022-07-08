@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { createExternalChat } = require("../process");
 require("dotenv").config();
 var prompt = require("prompt");
 prompt.start();
@@ -169,7 +168,7 @@ async function createChannel(idTeam, accessToken) {
   }
 }
 
-async function getChannels(idTeam, accessToken) {
+async function getChannel(idTeam, accessToken) {
   const options = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -181,6 +180,27 @@ async function getChannels(idTeam, accessToken) {
   try {
     const response = await axios.default.get(
       `${endpoint}teams/${idTeam}/channels`,
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function getChannels( accessToken) {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-type": "application/json",
+    },
+  };
+  
+
+  try {
+    const response = await axios.default.get(
+      `${endpoint}groups`,
       options
     );
     return response.data;
@@ -295,6 +315,7 @@ async function addMember(idTeam, accessToken) {
         console.log("Escriba el numero del usuario");
         const { id } = await prompt.get(["id"]);
         if (parseInt(id) < users.length - 1 && parseInt(id) > -1) {
+          
           salir = true;
           idUser = users[parseInt(id)].id;
         }
@@ -391,11 +412,11 @@ module.exports = {
   creatEvent: creatEvent,
   createChannel: createChannel,
   getChannels: getChannels,
+  getChannel: getChannel,
   completeMigrationChannels: completeMigrationChannels,
   completeMigrationTeams: completeMigrationTeams,
   getMessages: getMessages,
   addMember: addMember,
-  createExternalChat: createExternalChat,
   createTeams: createTeams,
   completeMigrationChannelG: completeMigrationChannelG,
   creatGroup: creatGroup,
