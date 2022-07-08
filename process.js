@@ -63,7 +63,7 @@ async function createExternalChat(token) {
 
 async function CreateGroup(token) {
   await await fetch
-    .creatGroup(authResponse.accessToken)
+    .creatGroup(token)
     .then((res) => {
       console.log("Grupo creado y miembro agregado");
       return res;
@@ -74,11 +74,36 @@ async function CreateGroup(token) {
 }
 
 async function testo(token) {
-  return await fetch.addMember("463ce730-85da-48e6-864a-6ceb5fcca744", token);
+
+  let selectedTeam=idTeams.length<=0?"e6ac3150-e89e-4f7a-abf2-1cec263908aa":"none";
+  if("none"===selectedTeam){
+    console.log("Selecciona un grupo");
+    idTeams.forEach((channel,index)=>{
+      console.log(`#${index} id: ${channel.id} | name: ${channel.displayName} |`)
+    })
+    const { pos } = await prompt.get(["pos"]);
+    selectedTeam=idTeams[parseInt(pos)].id
+  }
+  
+  return await fetch.addMember(selectedTeam, token);
+}
+
+async function getChannels(token){
+  let teams=[];
+  return await fetch.getChannels(token).then(res=>{
+    res.value.forEach(channel => {
+      if(channel.displayName.toUpperCase().startsWith("TEST")){
+        console.log(`id: ${channel.id} | name: ${channel.displayName} |`)
+        teams.push(channel)
+      }
+    });
+    idTeams = [...teams];
+  }).catch(error=>console.log(error));
 }
 module.exports = {
   getUsers: getUsers,
   createExternalChat: createExternalChat,
   CreateGroup: CreateGroup,
   testo: testo,
+  getChannels:getChannels,
 };
