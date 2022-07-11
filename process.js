@@ -1,7 +1,10 @@
 const fetch = require("./bin/fetch");
 var prompt = require("prompt");
 prompt.start();
+
 let idTeams = [];
+
+/***************Region Functions App**************** */
 async function getUsers(token) {
   await fetch
     .getUsers(token)
@@ -74,36 +77,114 @@ async function CreateGroup(token) {
 }
 
 async function testo(token) {
-
-  let selectedTeam=idTeams.length<=0?"e6ac3150-e89e-4f7a-abf2-1cec263908aa":"none";
-  if("none"===selectedTeam){
+  let selectedTeam =
+    idTeams.length <= 0 ? "e6ac3150-e89e-4f7a-abf2-1cec263908aa" : "none";
+  if ("none" === selectedTeam) {
     console.log("Selecciona un grupo");
-    idTeams.forEach((channel,index)=>{
-      console.log(`#${index} id: ${channel.id} | name: ${channel.displayName} |`)
-    })
+    idTeams.forEach((channel, index) => {
+      console.log(
+        `#${index} id: ${channel.id} | name: ${channel.displayName} |`
+      );
+    });
     const { pos } = await prompt.get(["pos"]);
-    selectedTeam=idTeams[parseInt(pos)].id
+    selectedTeam = idTeams[parseInt(pos)].id;
   }
-  
+
   return await fetch.addMember(selectedTeam, token);
 }
 
-async function getChannels(token){
-  let teams=[];
-  return await fetch.getChannels(token).then(res=>{
-    res.value.forEach(channel => {
-      if(channel.displayName.toUpperCase().startsWith("TEST")){
-        console.log(`id: ${channel.id} | name: ${channel.displayName} |`)
-        teams.push(channel)
-      }
-    });
-    idTeams = [...teams];
-  }).catch(error=>console.log(error));
+async function getChannels(token) {
+  let teams = [];
+  return await fetch
+    .getChannels(token)
+    .then((res) => {
+      res.value.forEach((channel) => {
+        if (channel.displayName.toUpperCase().startsWith("TEST")) {
+          console.log(`id: ${channel.id} | name: ${channel.displayName} |`);
+          teams.push(channel);
+        }
+      });
+      idTeams = [...teams];
+    })
+    .catch((error) => console.log(error));
+}
+
+/**************Regions functions User**************/
+
+async function getInfo(Token) {}
+
+/************************/
+async function Menu_User(Token) {
+  prompt.start();
+  let exit = false;
+  while (!exit) {
+    console.log(`
+    ************ Menu Para Usuario ************\n
+    \t (1) Información de usuario
+    \t (2) Enviar Mensaje a un grupo
+    \t (3) Crear un Evento
+    \t (0) Cerrar programa
+    `);
+    const { op } = await prompt.get(["op"]);
+
+    switch (parseInt(op)) {
+      case 1:
+        try {
+          await fetch.getMe(Token);
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      case 2:
+        try {
+          console.log("Escriba el mensaje que desea enviar")
+          const { msg } = await prompt.get(["msg"]);
+          await fetch.sendMessageUser(Token,msg);
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      case 3:
+        try {
+          console.log("Escriba el nombre que debe colocar a su evento")
+          const { msg } = await prompt.get(["msg"]);
+          await fetch.createEventUser(Token,msg);
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      case 4:
+        try {
+          await process.createExternalChat(authResponse.accessToken);
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      case 5:
+        try {
+          process.Menu_User(await auth_User.login());
+          console.log("En proceso :3");
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      case 0:
+        exit = true;
+        console.clear();
+        console.log("Hasta luego");
+        break;
+      default:
+        console.clear();
+        console.log("Select a Graph operation first");
+        break;
+    }
+  }
 }
 module.exports = {
   getUsers: getUsers,
   createExternalChat: createExternalChat,
   CreateGroup: CreateGroup,
   testo: testo,
-  getChannels:getChannels,
+  getChannels: getChannels,
+  Menu_User,
 };
