@@ -7,7 +7,9 @@ prompt.start();
  * @param {string} endpoint
  * @param {string} accessToken
  */
+
 const endpoint = "https://graph.microsoft.com/v1.0/";
+/***App's Calls ****/
 async function callApi(accessToken) {
   const options = {
     headers: {
@@ -189,20 +191,16 @@ async function getChannel(idTeam, accessToken) {
   }
 }
 
-async function getChannels( accessToken) {
+async function getChannels(accessToken) {
   const options = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-type": "application/json",
     },
   };
-  
 
   try {
-    const response = await axios.default.get(
-      `${endpoint}groups`,
-      options
-    );
+    const response = await axios.default.get(`${endpoint}groups`, options);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -210,6 +208,7 @@ async function getChannels( accessToken) {
   }
 }
 
+//Migration Groups and channels
 async function completeMigrationChannels(idTeam, idChannel, accessToken) {
   const options = {
     headers: {
@@ -275,6 +274,7 @@ async function completeMigrationTeams(idTeam, accessToken) {
   }
 }
 
+//*** Chat Messages ***/
 async function getMessages(idTeam, idChannel, accessToken) {
   try {
     const options = {
@@ -294,7 +294,7 @@ async function getMessages(idTeam, idChannel, accessToken) {
     return error;
   }
 }
-
+/** Members**/
 async function addMember(idTeam, accessToken) {
   try {
     let idUser;
@@ -315,7 +315,6 @@ async function addMember(idTeam, accessToken) {
         console.log("Escriba el numero del usuario");
         const { id } = await prompt.get(["id"]);
         if (parseInt(id) < users.length - 1 && parseInt(id) > -1) {
-          
           salir = true;
           idUser = users[parseInt(id)].id;
         }
@@ -347,6 +346,7 @@ async function addMember(idTeam, accessToken) {
   }
 }
 
+//** create groups**/
 async function creatGroup(accessToken) {
   try {
     const options = {
@@ -406,18 +406,98 @@ async function creatGroup(accessToken) {
     return error;
   }
 }
+
+/**** User's Calls *****/
+async function getMe(accessToken) {
+  try {
+    const options = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-type": "application/json",
+      },
+    };
+    const response = await axios.default.get(
+      "https://graph.microsoft.com/v1.0/me",
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function sendMessageUser(accessToken, msg) {
+  try {
+    const options = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-type": "application/json",
+      },
+    };
+    const data = {
+      body: {
+        content: msg,
+      },
+    };
+    const response = await axios.default.post(
+      "https://graph.microsoft.com/v1.0/teams/aefe1e0f-2ca2-4a22-90ef-b9c4d852e6ac/channels/19%3aWd0G-oNKOIQl93I3GNs97QqHaUvbKtaBdpKh1UrOPLY1%40thread.tacv2/messages",
+      data,
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+async function createEventUser(accessToken, EventName) {
+  try {
+    const options = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-type": "application/json",
+      },
+    };
+    const data = {
+      subject: EventName,
+      start: {
+        dateTime: "2022-07-11T05:08:10.570Z",
+        timeZone: "UTC",
+      },
+      end: {
+        dateTime: "2022-07-18T05:08:10.570Z",
+        timeZone: "UTC",
+      },
+    };
+    const response = await axios.default.post(
+      "https://graph.microsoft.com/v1.0/me/events",
+      data,
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+/*** Exports ***/
 module.exports = {
+  getMe: getMe,
   getUsers: callApi,
-  sendMessage: sendMessage,
-  creatEvent: creatEvent,
-  createChannel: createChannel,
-  getChannels: getChannels,
-  getChannel: getChannel,
-  completeMigrationChannels: completeMigrationChannels,
-  completeMigrationTeams: completeMigrationTeams,
-  getMessages: getMessages,
   addMember: addMember,
-  createTeams: createTeams,
-  completeMigrationChannelG: completeMigrationChannelG,
+  getChannel: getChannel,
   creatGroup: creatGroup,
+  creatEvent: creatEvent,
+  sendMessage: sendMessage,
+  createTeams: createTeams,
+  getChannels: getChannels,
+  getMessages: getMessages,
+  createChannel: createChannel,
+  sendMessageUser: sendMessageUser,
+  createEventUser: createEventUser,
+  completeMigrationTeams: completeMigrationTeams,
+  completeMigrationChannels: completeMigrationChannels,
+  completeMigrationChannelG: completeMigrationChannelG,
 };

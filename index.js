@@ -1,7 +1,9 @@
 require("dotenv").config();
 var prompt = require("prompt");
 const auth = require("./bin/auth");
+const auth_User = require("./bin/auth_User");
 const process = require("./process");
+const readline = require("readline-sync");
 let users = [],
   selecedUser = {};
 
@@ -10,7 +12,7 @@ async function main() {
     const authResponse = await auth.getToken(auth.tokenRequest);
     let exit = false;
     prompt.start();
-    
+
     while (!exit) {
       console.log(`
     Menu\n
@@ -18,6 +20,7 @@ async function main() {
     \t [2] Obtener lista de canales
     \t [3] Crear un Grupo
     \t [4] Crear Canal con mensaje
+    \t [5] Iniciar Sesión cómo usuario
     \t [0] Cerrar programa
     `);
       const { op } = await prompt.get(["op"]);
@@ -32,7 +35,7 @@ async function main() {
           break;
         case 2:
           try {
-            await process.getChannels(authResponse.accessToken)
+            await process.getChannels(authResponse.accessToken);
           } catch (error) {
             console.error(error);
           }
@@ -53,7 +56,8 @@ async function main() {
           break;
         case 5:
           try {
-            await process.testo(authResponse.accessToken);
+            await process.Menu_User(await auth_User.login());
+            console.log("En proceso :3");
           } catch (error) {
             console.error(error);
           }
