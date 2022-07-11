@@ -3,9 +3,6 @@ var prompt = require("prompt");
 const auth = require("./bin/auth");
 const auth_User = require("./bin/auth_User");
 const process = require("./process");
-const readline = require("readline-sync");
-let users = [],
-  selecedUser = {};
 
 async function main() {
   try {
@@ -20,7 +17,7 @@ async function main() {
     \t [2] Obtener lista de canales
     \t [3] Crear un Grupo
     \t [4] Crear Canal con mensaje
-    \t [5] Iniciar Sesión cómo usuario
+    \t [5] Iniciar Sesión como usuario
     \t [0] Cerrar programa
     `);
       const { op } = await prompt.get(["op"]);
@@ -69,7 +66,7 @@ async function main() {
           break;
         default:
           console.clear();
-          console.log("Select a Graph operation first");
+          console.log("Seleccione una opción valida");
           break;
       }
     }
