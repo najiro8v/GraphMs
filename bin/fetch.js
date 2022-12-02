@@ -1,6 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 var prompt = require("prompt");
+var userModel = require("./userModels.enum");
 prompt.start();
 /**
  * Calls the endpoint with authorization bearer token.
@@ -8,6 +9,7 @@ prompt.start();
  * @param {string} accessToken
  */
 
+let UsersList = [];
 const endpoint = "https://graph.microsoft.com/v1.0/";
 /***App's Calls ****/
 async function callApi(accessToken) {
@@ -111,6 +113,200 @@ async function creatEvent(endpoint, accessToken) {
   }
 }
 
+async function GetIdUser(accessToken, ...values) {
+  let valueUser;
+
+  let usersRes = await callApi(accessToken);
+  if (UsersList.length == 0) UsersList = usersRes.value;
+  let users = UsersList;
+  if (users && users.length > 0) {
+    console.log("Seleccione un usuario");
+    let text = "";
+    users.forEach((user, index) => {
+      text += `#${index} : ${user.displayName} \t\t`;
+      if (index % 3 === 0) {
+        text += "\n";
+      }
+    });
+    console.log(text);
+    let salir = false;
+    do {
+      console.log("Escriba el numero del usuario");
+      const { id } = await prompt.get(["id"]);
+      if (parseInt(id) < users.length - 1 && parseInt(id) > -1) {
+        salir = true;
+        if (values.length > 0) {
+          valueUser = {};
+          values.forEach((e) => {
+            valueUser[e] = users[parseInt(id)][e];
+          });
+        } else {
+          valueUser = users[parseInt(id)]["id"];
+        }
+      }
+    } while (!salir);
+  }
+
+  return valueUser;
+}
+
+async function sendEvent(accessToken) {
+  idUser = await GetIdUser(accessToken);
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-type": "application/json",
+    },
+  };
+  console.log("Correo de la persona a enviar evento");
+  let { mail } = await GetIdUser(accessToken, userModel.Correo);
+  const data = {
+    subject: "Let's go for lunch",
+    body: {
+      contentType: "HTML",
+      content: "Does late morning work for you?",
+    },
+    start: {
+      dateTime: "2022-12-16T12:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    end: {
+      dateTime: "2022-12-16T14:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    location: {
+      displayName: "Harry's Bar",
+    },
+    attendees: [
+      {
+        emailAddress: {
+          address: mail,
+          name: "Harold",
+        },
+        type: "required",
+      },
+    ],
+  };
+
+  try {
+    const response = await axios.default.post(
+      `https://graph.microsoft.com/v1.0/users/${idUser}/calendar/events`,
+      data,
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function sendEventsByCalendar(accessToken) {
+  idUser = await GetIdUser(accessToken);
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-type": "application/json",
+    },
+  };
+  // "Licitaciones"
+  const idCalendar =
+    "AAMkADM2ZmY4ZmI2LTE5NGMtNDIwNy05M2UyLTgwNzVmYzkzZjBjNgBGAAAAAACH8sNiNUxJRoTsm1iaGS3RBwAtT6tvPZG4RLdrQh9JUUN8AAAAAAEGAAAtT6tvPZG4RLdrQh9JUUN8AACXDNv_AAA=";
+  console.log("Correo de la persona a enviar evento");
+  let { mail, displayName } = await GetIdUser(
+    accessToken,
+    userModel.Correo,
+    userModel.Nombre
+  );
+  const data = {
+    subject: "Let's go for lunch",
+    body: {
+      contentType: "HTML",
+      content: "Does late morning work for you?",
+    },
+    start: {
+      dateTime: "2022-12-17T12:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    end: {
+      dateTime: "2022-12-17T14:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    location: {
+      displayName: "Harry's Bar",
+    },
+    attendees: [
+      {
+        emailAddress: {
+          address: mail,
+          name: displayName,
+        },
+        type: "required",
+      },
+    ],
+  };
+  try {
+    const response = await axios.default.post(
+      `https://graph.microsoft.com/v1.0/users/${idUser}/calendars/${idCalendar}/events`,
+      data,
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function getCalendar(accessToken) {
+  idUser = await GetIdUser(accessToken);
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-type": "application/json",
+    },
+  };
+
+  const data = {
+    subject: "Let's go for lunch",
+    body: {
+      contentType: "HTML",
+      content: "Does late morning work for you?",
+    },
+    start: {
+      dateTime: "2022-12-16T12:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    end: {
+      dateTime: "2022-12-16T14:00:00",
+      timeZone: "Pacific Standard Time",
+    },
+    location: {
+      displayName: "Harry's Bar",
+    },
+    attendees: [
+      {
+        emailAddress: {
+          address: "jzuniga@rdscr.com",
+          name: "Harold",
+        },
+        type: "required",
+      },
+    ],
+  };
+
+  try {
+    const response = await axios.default.get(
+      `https://graph.microsoft.com/v1.0/users/${idUser}/calendars`,
+
+      options
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
 async function createTeams(accessToken) {
   console.log("Coloca el nombre del Equipo ");
   const { name } = await prompt.get(["name"]);
@@ -500,4 +696,6 @@ module.exports = {
   completeMigrationTeams: completeMigrationTeams,
   completeMigrationChannels: completeMigrationChannels,
   completeMigrationChannelG: completeMigrationChannelG,
+  sendEvent: sendEventsByCalendar,
+  getCalendar: getCalendar,
 };

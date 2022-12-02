@@ -25,6 +25,12 @@ async function getUsers(token) {
     });
 }
 
+async function sendEvent(token) {
+  await fetch.sendEvent(token);
+}
+async function getCalendar(token) {
+  await fetch.getCalendar(token);
+}
 async function createExternalChat(token) {
   let teamId, idChannel;
 
@@ -64,6 +70,17 @@ async function createExternalChat(token) {
     });
 }
 
+async function CreateGroup(token) {
+  await await fetch
+    .creatGroup(token)
+    .then((res) => {
+      console.log("Grupo creado y miembro agregado");
+      return res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 async function CreateGroup(token) {
   await await fetch
     .creatGroup(token)
@@ -137,18 +154,18 @@ async function Menu_User(Token) {
         break;
       case 2:
         try {
-          console.log("Escriba el mensaje que desea enviar")
+          console.log("Escriba el mensaje que desea enviar");
           const { msg } = await prompt.get(["msg"]);
-          await fetch.sendMessageUser(Token,msg);
+          await fetch.sendMessageUser(Token, msg);
         } catch (error) {
           console.error(error);
         }
         break;
       case 3:
         try {
-          console.log("Escriba el nombre que debe colocar a su evento")
+          console.log("Escriba el nombre que debe colocar a su evento");
           const { msg } = await prompt.get(["msg"]);
-          await fetch.createEventUser(Token,msg);
+          await fetch.createEventUser(Token, msg);
         } catch (error) {
           console.error(error);
         }
@@ -187,4 +204,6 @@ module.exports = {
   testo: testo,
   getChannels: getChannels,
   Menu_User,
+  sendEvent,
+  getCalendar,
 };

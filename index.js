@@ -16,8 +16,9 @@ async function main() {
     \t [1] Obtener lista de usuarios
     \t [2] Obtener lista de canales
     \t [3] Crear un Grupo
-    \t [4] Crear Canal con mensaje
+    \t [4] Mandar evento a Jzuniga
     \t [5] Iniciar Sesión como usuario
+    \t [6] Conseguir calendario
     \t [0] Cerrar programa
     `);
       const { op } = await prompt.get(["op"]);
@@ -46,7 +47,8 @@ async function main() {
           break;
         case 4:
           try {
-            await process.createExternalChat(authResponse.accessToken);
+            // await process.createExternalChat(authResponse.accessToken);
+            await process.sendEvent(authResponse.accessToken);
           } catch (error) {
             console.error(error);
           }
@@ -55,6 +57,13 @@ async function main() {
           try {
             await process.Menu_User(await auth_User.login());
             console.log("En proceso :3");
+          } catch (error) {
+            console.error(error);
+          }
+          break;
+        case 6:
+          try {
+            await process.getCalendar(authResponse.accessToken);
           } catch (error) {
             console.error(error);
           }
