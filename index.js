@@ -14,8 +14,7 @@ async function main() {
       console.log(`
     Menu\n
     \t [1] Obtener lista de usuarios
-    \t [2] Iniciar Sesión como usuario
-    \t [3] GetDrive
+    \t [2] GetDrive
     \t [0] Cerrar programa
     `);
       const { op } = await prompt.get(["op"]);
@@ -25,11 +24,7 @@ async function main() {
           await processOPC(process.getUsers, authResponse);
           break;
         case 2:
-          await processOPC(process.getChannels, authResponse);
-
-          break;
-        case 3:
-          await processOPC(process.CreateGroup, authResponse);
+          await processOPC(process.getDrive, authResponse);
           break;
         case 0:
           exit = true;
@@ -52,7 +47,7 @@ main();
 async function processOPC(cb, authResponse) {
   let user;
   try {
-    users = await cb(authResponse.access_token);
+    users = await cb(authResponse.accessToken);
   } catch (error) {
     console.error(error);
   } finally {

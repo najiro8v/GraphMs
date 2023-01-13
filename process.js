@@ -126,6 +126,20 @@ async function getChannels(token) {
     .catch((error) => console.log(error));
 }
 
+/********** */
+
+async function getDrive(token) {
+  let teams = [];
+  return await fetch
+    .getDrive(token)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => console.log(error));
+}
+
+/*************** */
+
 /**************Regions functions User**************/
 
 async function getInfo(Token) {}
@@ -206,4 +220,5 @@ module.exports = {
   Menu_User,
   sendEvent,
   getCalendar,
+  getDrive,
 };

@@ -404,6 +404,29 @@ async function getChannels(accessToken) {
   }
 }
 
+/***************/
+async function getDrive(accessToken) {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-type": "application/json",
+    },
+  };
+  idUser = await GetIdUser(accessToken);
+  try {
+    const path = "/drive/root:/Grabaciones/0006/0006.mp4";
+    const response = await axios.default.get(
+      `${endpoint}users/${idUser}${path}`,
+      options
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+/***** */
 //Migration Groups and channels
 async function completeMigrationChannels(idTeam, idChannel, accessToken) {
   const options = {
@@ -698,4 +721,5 @@ module.exports = {
   completeMigrationChannelG: completeMigrationChannelG,
   sendEvent: sendEventsByCalendar,
   getCalendar: getCalendar,
+  getDrive: getDrive,
 };
