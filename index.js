@@ -14,59 +14,22 @@ async function main() {
       console.log(`
     Menu\n
     \t [1] Obtener lista de usuarios
-    \t [2] Obtener lista de canales
-    \t [3] Crear un Grupo
-    \t [4] Mandar evento a Jzuniga
-    \t [5] Iniciar Sesión como usuario
-    \t [6] Conseguir calendario
+    \t [2] Iniciar Sesión como usuario
+    \t [3] GetDrive
     \t [0] Cerrar programa
     `);
       const { op } = await prompt.get(["op"]);
 
       switch (parseInt(op)) {
         case 1:
-          try {
-            users = await process.getUsers(authResponse.accessToken);
-          } catch (error) {
-            console.error(error);
-          }
+          await processOPC(process.getUsers, authResponse);
           break;
         case 2:
-          try {
-            await process.getChannels(authResponse.accessToken);
-          } catch (error) {
-            console.error(error);
-          }
+          await processOPC(process.getChannels, authResponse);
+
           break;
         case 3:
-          try {
-            await process.CreateGroup(authResponse.accessToken);
-          } catch (error) {
-            console.error(error);
-          }
-          break;
-        case 4:
-          try {
-            // await process.createExternalChat(authResponse.accessToken);
-            await process.sendEvent(authResponse.accessToken);
-          } catch (error) {
-            console.error(error);
-          }
-          break;
-        case 5:
-          try {
-            await process.Menu_User(await auth_User.login());
-            console.log("En proceso :3");
-          } catch (error) {
-            console.error(error);
-          }
-          break;
-        case 6:
-          try {
-            await process.getCalendar(authResponse.accessToken);
-          } catch (error) {
-            console.error(error);
-          }
+          await processOPC(process.CreateGroup, authResponse);
           break;
         case 0:
           exit = true;
@@ -85,3 +48,14 @@ async function main() {
 }
 
 main();
+
+async function processOPC(cb, authResponse) {
+  let user;
+  try {
+    users = await cb(authResponse.access_token);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    return users;
+  }
+}
